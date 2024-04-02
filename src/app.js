@@ -2,8 +2,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/style.css";
 import taskFieldTemplate from "./templates/taskField.html";
 import noAccessTemplate from "./templates/noAccess.html";
+import dropdownMenuTemplate from "./templates/dropdownMenu.html";
 import { User } from "./models/User";
 import { generateTestUser } from "./utils";
+import { generateTaskField } from "./utils";
+import { generateNoAccess } from "./utils";
+
 import { State } from "./state";
 import { authUser } from "./services/auth";
 
@@ -19,9 +23,8 @@ loginForm.addEventListener("submit", function (e) {
   const login = formData.get("login");
   const password = formData.get("password");
 
-  let fieldHTMLContent = authUser(login, password)
-    ? taskFieldTemplate
-    : noAccessTemplate;
-
-  document.querySelector("#content").innerHTML = fieldHTMLContent;
+  authUser(login, password)
+    ? generateTaskField(taskFieldTemplate, dropdownMenuTemplate)
+    : generateNoAccess(noAccessTemplate);
 });
+

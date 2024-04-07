@@ -1,4 +1,4 @@
-import newTask from "./templates/newTask.html";
+import { appState } from "./app";
 
 
 export const getFromStorage = function (key) {
@@ -11,9 +11,9 @@ export const addToStorage = function (obj, key) {
   localStorage.setItem(key, JSON.stringify(storageData));
 };
 
-export const generateTestUser = function (User) {
-  localStorage.clear();
-  const testUser = new User("1", "1");
+export const generateTestUser = function (User, login, password) {
+  /* localStorage.clear(); */
+  const testUser = new User(login, password);
   User.save(testUser);
 };
 
@@ -55,9 +55,32 @@ function backlogLogick () {
     document.getElementById('backlog_btn__sabmit').style.display = 'none';
     document.getElementById('backlog_input').style.display = 'none';
     document.getElementById('backlog_btn__add').style.display = 'block';
-    
-    let input = document.getElementById('backlog');
-    input.insertAdjacentHTML('beforebegin', newTask);
+      
+    addTaskInLocalStorage(form.value);
 
   });
 }
+
+function addTaskInLocalStorage(input) {
+  if (appState.currentUser.backlog === undefined) {
+    appState.currentUser.backlog = new Array();
+  }
+  appState.currentUser.backlog.push(input);
+  createNodeBacklog(input, 'backlog');
+  console.log(appState.currentUser);
+};
+
+/* function getTaskBacklog(arrBacklog) {
+  for (let task of arrBacklog) {
+    createNodeBacklog(task);
+  }
+} */
+
+function createNodeBacklog(task, node) {
+  let div = document.createElement('div');
+  div.className = "container tasks-zone__task pt-2 pb-2 mt-2 mb-2";
+  div.append(task);
+
+  let nodeTask = document.getElementById(node);
+  nodeTask.append(div);
+};

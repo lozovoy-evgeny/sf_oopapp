@@ -1,5 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import { getFromStorage, addToStorage } from "../utils";
+import { appState } from "../app";
 
 export class User extends BaseModel {
   constructor(login, password) {
@@ -12,8 +13,10 @@ export class User extends BaseModel {
     let users = getFromStorage(this.storageKey);
     if (users.length == 0) return false;
     for (let user of users) {
-      if (user.login == this.login && user.password == this.password)
+      if (user.login == this.login && user.password == this.password) {
+        appState.currentUser = user;
         return true;
+      }    
     }
     return false;
   }

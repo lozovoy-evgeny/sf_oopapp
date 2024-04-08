@@ -1,6 +1,5 @@
 import { appState } from "./app";
 
-
 export const getFromStorage = function (key) {
   return JSON.parse(localStorage.getItem(key) || "[]");
 };
@@ -57,7 +56,6 @@ function backlogLogick () {
     document.getElementById('backlog_btn__add').style.display = 'block';
       
     addTaskInLocalStorage(form.value);
-
   });
 }
 
@@ -67,20 +65,29 @@ function addTaskInLocalStorage(input) {
   }
   appState.currentUser.backlog.push(input);
   createNodeBacklog(input, 'backlog');
-  console.log(appState.currentUser);
+  addToStorageUsers();
 };
-
-/* function getTaskBacklog(arrBacklog) {
-  for (let task of arrBacklog) {
-    createNodeBacklog(task);
-  }
-} */
 
 function createNodeBacklog(task, node) {
   let div = document.createElement('div');
-  div.className = "container tasks-zone__task pt-2 pb-2 mt-2 mb-2";
+  div.className = "container tasks-zone__task pt-2 pb-2 mt-2 mb-2 text-break";
   div.append(task);
 
   let nodeTask = document.getElementById(node);
   nodeTask.append(div);
 };
+
+function addToStorageUsers() {
+  let currentUser = appState.currentUser;
+  console.log(currentUser);
+  let allUser = JSON.parse(localStorage.users);
+  console.log(allUser);
+  
+  for(let i=0; i<allUser.length; i++) {
+    if(allUser[i].id === currentUser.id) {
+      allUser[i] = currentUser;
+      localStorage.clear();
+      localStorage.setItem('users', JSON.stringify(allUser));
+    }
+  };
+}

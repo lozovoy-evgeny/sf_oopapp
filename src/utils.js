@@ -56,6 +56,7 @@ function backlogLogick () {
     document.getElementById('backlog_btn__add').style.display = 'block';
       
     addTaskInLocalStorage(form.value);
+
   });
 }
 
@@ -63,14 +64,23 @@ function addTaskInLocalStorage(input) {
   if (appState.currentUser.backlog === undefined) {
     appState.currentUser.backlog = new Array();
   }
-  appState.currentUser.backlog.push(input);
-  createNodeBacklog(input, 'backlog');
+
+  let taskAttributs = {
+    id:generateId(),
+    name: input,
+    description:"",
+  }
+
+  appState.currentUser.backlog.push(taskAttributs);
+  createNodeBacklog(input, 'backlog', taskAttributs.id);
+  addListenerToEditTask(taskAttributs.id);
   addToStorageUsers();
 };
 
-function createNodeBacklog(task, node) {
+function createNodeBacklog(task, node, id) {
   let div = document.createElement('div');
   div.className = "container tasks-zone__task pt-2 pb-2 mt-2 mb-2 text-break";
+  div.id = id;
   div.append(task);
 
   let nodeTask = document.getElementById(node);
@@ -91,3 +101,16 @@ function addToStorageUsers() {
     }
   };
 }
+
+function generateId() {
+  let id = new Date().getTime();
+  return id;
+}
+
+function addListenerToEditTask(id) {
+  let element = document.getElementById(`${id}`);
+  element.addEventListener('click', function(){
+    
+  });
+}
+

@@ -129,7 +129,7 @@
 
 .tasks-editor__name {
   all: unset;
-  width: 1082px;
+  width: 621px;
   height: 28px;
   color: rgb(0, 0, 0);
   font-family: Roboto;
@@ -137,5 +137,42 @@
   font-weight: 400;
   line-height: 28px;
   letter-spacing: 0%;
+  text-align: left; 
+}
+
+.tasks-editor__name:focus, 
+.tasks-editor__description:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.tasks-editor__description {
+  all: unset;
+  width: 621px;
+  height: 430px;
+  color: rgb(0, 0, 0);
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0%;
   text-align: left;
+}
+
+.tasks-editor__description::-webkit-scrollbar-thumb:hover {
+  background: rgb(203, 203, 203) !important;
+}
+
+.tasks-editor__description::-webkit-scrollbar {
+  width: 12px;
+  background-color: rgb(255, 255, 255);
+}
+.tasks-editor__description::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgb(203, 203, 203);
+}
+
+.bi {
+  color: black;
+  font-size: 200px;
 }

@@ -61,29 +61,30 @@ function backlogLogick () {
 }
 
 function addTaskInLocalStorage(input) {
-  if (appState.currentUser.backlog === undefined) {
-    appState.currentUser.backlog = new Array();
+  if (appState.currentUser.tasks === undefined) {
+    appState.currentUser.tasks = new Array();
   }
 
   let taskAttributs = {
     id:generateId(),
     name: input,
     description:"",
+    stat:"backlog",
   }
 
-  appState.currentUser.backlog.push(taskAttributs);
-  createNodeBacklog(input, 'backlog', taskAttributs.id);
+  appState.currentUser.tasks.push(taskAttributs);
+  createNode(taskAttributs);
   addListenerToEditTask(taskAttributs.id);
   addToStorageUsers();
 };
 
-function createNodeBacklog(task, node, id) {
+function createNode(taskAttributs) {
   let div = document.createElement('div');
   div.className = "container tasks-zone__task pt-2 pb-2 mt-2 mb-2 text-break";
-  div.id = id;
-  div.append(task);
+  div.id = taskAttributs.id;
+  div.append(taskAttributs.name);
 
-  let nodeTask = document.getElementById(node);
+  let nodeTask = document.getElementById(taskAttributs.stat);
   nodeTask.append(div);
 };
 
@@ -93,7 +94,7 @@ function addToStorageUsers() {
   let allUser = JSON.parse(localStorage.users);
   console.log(allUser);
   
-  for(let i=0; i<allUser.length; i++) {
+  for(let i=0; i < allUser.length; i++) {
     if(allUser[i].id === currentUser.id) {
       allUser[i] = currentUser;
       localStorage.clear();
@@ -110,7 +111,50 @@ function generateId() {
 function addListenerToEditTask(id) {
   let element = document.getElementById(`${id}`);
   element.addEventListener('click', function(){
-    
+    let editor = document.querySelector('.tasks-editor');
+    editor.style.display = 'block';
+    let task = findTask(id);
+    document.querySelector('.tasks-editor__name').value = task.name;
+    document.getElementById('tasks-editor__btn').value = task.description;
+
+    addChangeTaskInStorage(task);
   });
+}
+
+function addChangeTaskInStorage(task) {
+  let btn = document.getElementById('tasks-editor__btn');
+  btn.addEventListener('click', function(){
+    task.name = document.querySelector('.tasks-editor__name').value;
+    task.description = document.querySelector('.tasks-editor__description').value;
+    findAndChengeTask(task.id, task);
+    replacementTaskOnScreen(task.id, task);
+  });
+}
+
+function replacementTaskOnScreen(id, task) {
+  let remoteNode = document.getElementById(`${id}`);
+  remoteNode.remove();
+  createNode(task);
+  addListenerToEditTask(id);
+  document.querySelector('.tasks-editor').style.display = 'none';
+  addToStorageUsers();
+}
+
+function findTask(id) {
+  let tasks = appState.currentUser.tasks;
+  for (let i=0; i < tasks.length; i++) {
+    if (tasks[i].id === id) {
+      return tasks[i];
+    }
+  }
+}
+
+function findAndChengeTask(id, task) {
+  let tasks = appState.currentUser.tasks;
+  for (let i=0; i < tasks.length; i++) {
+    if (tasks[i].id === id) {
+      appState.currentUser.tasks[i] = task;
+    }
+  }
 }
 

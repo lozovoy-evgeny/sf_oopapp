@@ -24,17 +24,12 @@
                     <div id="ready">
                     </div>
                     <div class="dropdown-center__ready" id="dropdownMenu">
-                        <button type="button" class="tasks-zone__button btn ps-0" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button type="button" class="ready__btn tasks-zone__button btn ps-0 disabled" data-bs-toggle="dropdown" aria-expanded="false">
                             + Add cart
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" >
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Log Out</a></li>
+                        <ul class="dropdown-menu dropdown-menu-center dropdown__ready">
                         </ul>
                     </div>
-                    <button type="button" class="tasks-zone__button btn ps-0">
-                        + Add cart
-                    </button>
                 </div>
         </section>
         <section class="main-section col">
@@ -42,11 +37,15 @@
                     <div class="tasks-zone__name">
                         <p>In Progress</p>
                     </div>
-                    <div id="in-progress">
+                    <div id="progress">
                     </div>
-                    <button type="button" class="tasks-zone__button btn ps-0">
-                        + Add cart
-                    </button>
+                    <div class="dropdown-center__progress" id="dropdownMenu">
+                        <button type="button" class="progress__btn tasks-zone__button btn ps-0 disabled" data-bs-toggle="dropdown" aria-expanded="false">
+                            + Add cart
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-center dropdown__progress">
+                        </ul>
+                    </div>
                 </div>
         </section>
         <section class="main-section col">
@@ -56,9 +55,13 @@
                     </div>
                     <div id="finished">
                     </div>
-                    <button type="button" class="tasks-zone__button btn ps-0">
-                        + Add cart
-                    </button>
+                    <div class="dropdown-center__finished" id="dropdownMenu">
+                        <button type="button" class="finished__btn tasks-zone__button btn ps-0 disabled" data-bs-toggle="dropdown" aria-expanded="false">
+                            + Add cart
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-center dropdown__finished">
+                        </ul>
+                    </div>
                 </div>
         </section>
         <section class="tasks-editor container-fluid position-absolute">

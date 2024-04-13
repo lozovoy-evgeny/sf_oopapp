@@ -15,9 +15,12 @@ export const appState = new State();
 
 const loginForm = document.querySelector("#app-login-form");
 
-localStorage.clear();
-generateTestUser(User, '1', '1');
-generateTestUser(User, '2', '2');
+/* localStorage.clear(); */
+if(localStorage.users == undefined) {
+  generateTestUser(User, '1', '1');
+  generateTestUser(User, '2', '2');
+}
+
 
 loginForm.addEventListener("submit", function (e) {
   e.preventDefault();

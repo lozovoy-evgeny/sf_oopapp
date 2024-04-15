@@ -142,7 +142,8 @@
 }
 
 .tasks-editor__name:focus, 
-.tasks-editor__description:focus {
+.tasks-editor__description:focus,
+.btn-close:focus {
   outline: none;
   box-shadow: none;
 }
@@ -176,4 +177,24 @@
 .bi {
   color: black;
   font-size: 200px;
+}
+
+.tasks-editor-btn__delete {
+  margin-top: 430px;
+  margin-right: 20px;
+}
+
+.alert {
+  margin-bottom: 0px;
+  height: 38px;
+}
+
+.btn-close {
+  margin-top: -10px;
+}
+
+.btn-group {
+  margin-left: auto; 
+  margin-right: 20px;
+  background: rgb(203, 203, 203)
 }

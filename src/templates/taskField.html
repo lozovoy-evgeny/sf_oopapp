@@ -10,7 +10,7 @@
                     <button type="button" class="tasks-zone__button btn ps-0" id="backlog_btn__add">
                         + Add cart
                     </button>
-                    <input class="form-control text-wrap" type="text" id="backlog_input">
+                    <input class="form-control text-wrap" type="text" id="backlog_input" autocomplete="off">
                     <button class="btn btn-primary backlog_btn_sabmit mt-2 mb-2" type="submit" id="backlog_btn__sabmit">
                         Sabmit
                     </button>
@@ -70,7 +70,10 @@
                     <input class="tasks-editor__name form-control text-wrap mt-4 ms-4" type="text" id="#">
                     <button id="tasks-editor__btn" class="btn float-end mt-1 ms-4"><img src="../assets/x-lg.svg" alt="Bootstrap" width="32" height="32"></button>
                 </div>
-                <textarea class="tasks-editor__description form-control text-wrap mt-4 ms-4" type="text" id="#"></textarea>
+                <div>
+                    <textarea class="tasks-editor__description form-control text-wrap mt-4 ms-4" type="text" id="#"></textarea>
+                    <button class="btn tasks-editor-btn__delete btn-danger float-end mt-10 ms-4">Delete task</button>
+                </div>
             </div>
         </section>
     </div>

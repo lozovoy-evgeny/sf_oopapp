@@ -3,11 +3,11 @@ import "./styles/style.css";
 import taskFieldTemplate from "./templates/taskField.html";
 import noAccessTemplate from "./templates/noAccess.html";
 import dropdownMenuTemplate from "./templates/dropdownMenu.html";
+import dropdownMenuTemplateAdmin from "./templates/dropdownMenuAdmin.html"
 import { User } from "./models/User";
 import { generateTestUser } from "./utils";
 import { generateTaskField } from "./utils";
 import { generateNoAccess } from "./utils";
-
 import { State } from "./state";
 import { authUser } from "./services/auth";
 
@@ -17,10 +17,11 @@ const loginForm = document.querySelector("#app-login-form");
 
 /* localStorage.clear(); */
 if(localStorage.users == undefined) {
-  generateTestUser(User, '1', '1');
-  generateTestUser(User, '2', '2');
+  generateTestUser(User, '1', '1', 'users');
+  generateTestUser(User, '2', '2', 'users');
+  generateTestUser(User, '3', '3', 'admins');
+  generateTestUser(User, '4', '4', 'users');
 }
-
 
 loginForm.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -29,7 +30,7 @@ loginForm.addEventListener("submit", function (e) {
   const password = formData.get("password");
 
   authUser(login, password)
-    ? generateTaskField(taskFieldTemplate, dropdownMenuTemplate)
+    ? generateTaskField(taskFieldTemplate, dropdownMenuTemplate, dropdownMenuTemplateAdmin)
     : generateNoAccess(noAccessTemplate);
 });
 

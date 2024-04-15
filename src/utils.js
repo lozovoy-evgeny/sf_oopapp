@@ -1,4 +1,5 @@
 import { appState } from "./app";
+import noAccessTemplate from "./templates/noAccess.html";
 
 export const getFromStorage = function (key) {
   return JSON.parse(localStorage.getItem(key) || "[]");
@@ -10,25 +11,41 @@ export const addToStorage = function (obj, key) {
   localStorage.setItem(key, JSON.stringify(storageData));
 };
 
-export const generateTestUser = function (User, login, password) {
+export const generateTestUser = function (User, login, password, storageKey) {
   /* localStorage.clear(); */
-  const testUser = new User(login, password);
+  const testUser = new User(login, password, storageKey);
   User.save(testUser);
 };
 
-export const generateTaskField = function (taskFieldTemplate, dropdownMenuTemplate) {
+export const generateTaskField = function (taskFieldTemplate, dropdownMenuTemplate, dropdownMenuTemplateAdmin) {
   document.querySelector("#content").innerHTML = taskFieldTemplate;
   document.querySelector("#navbar").innerHTML = dropdownMenuTemplate;
   rotateDropdown();
   backlogLogick();
   dropdownMenuСompletion();
-  completionTaskField();
+  if (appState.currentUser.storageKey == 'admins') {
+    document.querySelector("#navbar").innerHTML = dropdownMenuTemplateAdmin;
+    completionTaskFieldAdmins();
+    rotateDropdown();
+  } else {
+    completionTaskField();
+  }
   countTask();
+  hello();
 };
 
 export const generateNoAccess = function (noAccessTemplate) {
   document.querySelector("#content").innerHTML = noAccessTemplate;
+  let alert = document.querySelector('.alert');
+  alert.prepend(`Неверный логин или пароль!!!`);
 };
+
+function hello() {
+  let node = document.querySelector('.navbar-brand');
+  node.insertAdjacentHTML('afterend', noAccessTemplate);
+  let alert = document.querySelector('.alert'); 
+  alert.prepend(`Hello ${appState.currentUser.login}!!!`);
+}
 
 function completionTaskField() {
   let tasks = appState.currentUser.tasks;
@@ -37,6 +54,65 @@ function completionTaskField() {
     addListenerToEditTask(tasks[index].id);
   };
 };
+
+function completionTaskFieldAdmins() {
+  completionTaskField();
+  chooseKabnanDropdown();
+}
+
+function chooseKabnanDropdown() {
+  let chooseDropdown = document.getElementById('choose-kanban-dropdown-menu');
+  let users = getFromStorage('users');
+  console.log(users);
+  for (let i=0; i < users.length; i++) {
+    let li = document.createElement('li');
+    let a = document.createElement('a');
+    a.setAttribute("id", users[i].id);
+    a.textContent = users[i].login;
+    a.classList.add('dropdown-item');
+    li.append(a);
+    chooseDropdown.prepend(li);
+  }
+  let li = document.createElement('li');
+  let a = document.createElement('a');
+  a.setAttribute("id", appState.currentUser.id);
+  a.textContent = 'My tasks';
+  a.classList.add('dropdown-item');
+  li.append(a);
+  chooseDropdown.prepend(li);
+  addChooseKanbanListener(chooseDropdown);
+}
+
+function addChooseKanbanListener(chooseDropdown) {
+  for (let i=0; i < chooseDropdown.childNodes.length - 1; i++) {
+    chooseDropdown.childNodes[i].addEventListener('click', function() {
+      let id = chooseDropdown.childNodes[i].childNodes[0].getAttribute('id');
+      console.log(id);
+      let currentUser = findUser(id);
+      appState.currentUser = currentUser;
+      deleteNode();
+      completionTaskField();
+    });
+  }
+}
+
+function deleteNode() {
+  let node = document.querySelectorAll('.tasks-zone__task');
+  if((typeof(node) !== "undefined")){
+    for(let i = 0; i < node.length; i++) {
+      node[i].remove();
+    }
+  }
+}
+
+function findUser(id) {
+  let users = getFromStorage('users');
+  for (let i=0; i < users.length; i++) {
+    if (users[i].id == id) {
+      return users[i];
+    }
+  }
+}
 
 function countTask() {
   let activeTask = document.querySelector('.active-tasks');
@@ -76,6 +152,7 @@ function backlogLogick () {
   button.addEventListener('click', function () {
     document.getElementById('backlog_btn__sabmit').style.display = 'block';
     document.getElementById('backlog_input').style.display = 'block';
+    document.getElementById('backlog_input').value = '';
     document.getElementById('backlog_btn__add').style.display = 'none';
   });
 
@@ -125,7 +202,7 @@ function addToStorageUsers() {
   for(let i=0; i < allUser.length; i++) {
     if(allUser[i].id === currentUser.id) {
       allUser[i] = currentUser;
-      localStorage.clear();
+      /* localStorage.clear(); */
       localStorage.setItem('users', JSON.stringify(allUser));
     }
   };
@@ -144,9 +221,29 @@ function addListenerToEditTask(id) {
     editor.style.display = 'block';
     let task = findTask(id);
     document.querySelector('.tasks-editor__name').value = task.name;
-    document.getElementById('tasks-editor__btn').value = task.description;
-
+    
+    if (task.description == null) {
+      document.getElementById('.tasks-editor__description').value = task.description;
+    }
     addChangeTaskInStorage(task);
+    deleteTask(id);
+  });
+}
+
+function deleteTask(id) {
+  let btn = document.querySelector(".tasks-editor-btn__delete");
+  btn.addEventListener('click', function() {
+    let tasks = appState.currentUser.tasks;
+    for (let i=0; i < tasks.length; i++) {
+      if (tasks[i].id == id) {
+        tasks.splice(i, 1);
+      }
+    };
+    addToStorageUsers();
+    let deleteTask = document.getElementById(`${id}`);
+    deleteTask.remove();
+    dropdownMenuСompletion();
+    document.querySelector('.tasks-editor').style.display = 'none';
   });
 }
 
@@ -206,7 +303,7 @@ function dropdownMenuСompletion() {
   while (menuFinished.firstChild) {
     menuFinished.removeChild(menuFinished.firstChild);
   }
-  
+
   for (let i=0; i < tasks.length; i++) {
     if (tasks[i].stat === "backlog") {
       let li = document.createElement('li');
@@ -249,7 +346,6 @@ function dropdownMenuСompletion() {
     btnReady.classList.add("disabled");
     menuReady.classList.remove("show");
   }
-
   if (menuProgress.hasChildNodes()) {
     btnProgress.classList.remove("disabled");
   } else {
@@ -298,7 +394,7 @@ function addTaskToFinished() {
 }
 
 
-function chengeStatusTask (deleteNodeId, stat) {
+function chengeStatusTask(deleteNodeId, stat) {
   let deleteTask = document.getElementById(`${deleteNodeId}`);
   deleteTask.remove();
   dropdownMenuСompletion();
@@ -309,4 +405,3 @@ function chengeStatusTask (deleteNodeId, stat) {
   addToStorageUsers();
   addListenerToEditTask(deleteNodeId);
 }
-

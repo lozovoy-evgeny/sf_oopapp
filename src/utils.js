@@ -20,16 +20,14 @@ export const generateTestUser = function (User, login, password, storageKey) {
 export const generateTaskField = function (taskFieldTemplate, dropdownMenuTemplate, dropdownMenuTemplateAdmin) {
   document.querySelector("#content").innerHTML = taskFieldTemplate;
   document.querySelector("#navbar").innerHTML = dropdownMenuTemplate;
-  rotateDropdown();
   backlogLogick();
   dropdownMenuСompletion();
   if (appState.currentUser.storageKey == 'admins') {
     document.querySelector("#navbar").innerHTML = dropdownMenuTemplateAdmin;
-    completionTaskFieldAdmins();
-    rotateDropdown();
-  } else {
-    completionTaskField();
+    chooseKabnanDropdown();
   }
+  rotateDropdown();
+  completionTaskField();
   countTask();
   hello();
 };
@@ -55,15 +53,9 @@ function completionTaskField() {
   };
 };
 
-function completionTaskFieldAdmins() {
-  completionTaskField();
-  chooseKabnanDropdown();
-}
-
 function chooseKabnanDropdown() {
   let chooseDropdown = document.getElementById('choose-kanban-dropdown-menu');
   let users = getFromStorage('users');
-  console.log(users);
   for (let i=0; i < users.length; i++) {
     let li = document.createElement('li');
     let a = document.createElement('a');
@@ -87,11 +79,11 @@ function addChooseKanbanListener(chooseDropdown) {
   for (let i=0; i < chooseDropdown.childNodes.length - 1; i++) {
     chooseDropdown.childNodes[i].addEventListener('click', function() {
       let id = chooseDropdown.childNodes[i].childNodes[0].getAttribute('id');
-      console.log(id);
       let currentUser = findUser(id);
       appState.currentUser = currentUser;
       deleteNode();
       completionTaskField();
+      countTask();
     });
   }
 }
@@ -107,9 +99,15 @@ function deleteNode() {
 
 function findUser(id) {
   let users = getFromStorage('users');
+  let admins = getFromStorage('admins');
   for (let i=0; i < users.length; i++) {
     if (users[i].id == id) {
       return users[i];
+    }
+  }
+  for (let i=0; i < admins.length; i++) {
+    if (admins[i].id == id) {
+      return admins[i];
     }
   }
 }
@@ -198,12 +196,20 @@ function createNode(taskAttributs) {
 function addToStorageUsers() {
   let currentUser = appState.currentUser;
   let allUser = JSON.parse(localStorage.users);
+  let allAdmin = JSON.parse(localStorage.admins);
   
   for(let i=0; i < allUser.length; i++) {
     if(allUser[i].id === currentUser.id) {
       allUser[i] = currentUser;
       /* localStorage.clear(); */
       localStorage.setItem('users', JSON.stringify(allUser));
+    }
+  };
+  for(let i=0; i < allAdmin.length; i++) {
+    if(allAdmin[i].id === currentUser.id) {
+      allAdmin[i] = currentUser;
+      /* localStorage.clear(); */
+      localStorage.setItem('admins', JSON.stringify(allAdmin));
     }
   };
   countTask();
@@ -221,10 +227,7 @@ function addListenerToEditTask(id) {
     editor.style.display = 'block';
     let task = findTask(id);
     document.querySelector('.tasks-editor__name').value = task.name;
-    
-    if (task.description == null) {
-      document.getElementById('.tasks-editor__description').value = task.description;
-    }
+    document.querySelector('.tasks-editor__description').value = task.description;
     addChangeTaskInStorage(task);
     deleteTask(id);
   });
@@ -232,10 +235,10 @@ function addListenerToEditTask(id) {
 
 function deleteTask(id) {
   let btn = document.querySelector(".tasks-editor-btn__delete");
-  btn.addEventListener('click', function() {
+  btn.addEventListener('click', function a() {
     let tasks = appState.currentUser.tasks;
     for (let i=0; i < tasks.length; i++) {
-      if (tasks[i].id == id) {
+      if (tasks[i].id === id) {
         tasks.splice(i, 1);
       }
     };
@@ -244,27 +247,28 @@ function deleteTask(id) {
     deleteTask.remove();
     dropdownMenuСompletion();
     document.querySelector('.tasks-editor').style.display = 'none';
+    btn.removeEventListener('click', a);
   });
 }
 
 function addChangeTaskInStorage(task) {
   let btn = document.getElementById('tasks-editor__btn');
-  btn.addEventListener('click', function(){
+  btn.addEventListener('click', function a(){
     task.name = document.querySelector('.tasks-editor__name').value;
     task.description = document.querySelector('.tasks-editor__description').value;
     findAndChengeTask(task.id, task);
-    replacementTaskOnScreen(task.id, task);
+    replacementTaskOnScreen(task);
     dropdownMenuСompletion();
+    btn.removeEventListener('click', a);
   });
 }
 
-function replacementTaskOnScreen(id, task) {
-  let remoteNode = document.getElementById(`${id}`);
+function replacementTaskOnScreen(task) {
+  let remoteNode = document.getElementById(`${task.id}`);
   remoteNode.remove();
   createNode(task);
-  addListenerToEditTask(id);
+  addListenerToEditTask(task.id);
   document.querySelector('.tasks-editor').style.display = 'none';
-  addToStorageUsers();
 }
 
 function findTask(id) {
@@ -283,6 +287,7 @@ function findAndChengeTask(id, task) {
       appState.currentUser.tasks[i] = task;
     }
   }
+  addToStorageUsers();
 }
 
 function dropdownMenuСompletion() {
@@ -403,5 +408,12 @@ function chengeStatusTask(deleteNodeId, stat) {
   createNode(task);
   findAndChengeTask(deleteNodeId, task);
   addToStorageUsers();
-  addListenerToEditTask(deleteNodeId);
+  addListenerToEditTask(task);
+}
+
+function addUsers() {
+  let btn = document.querySelector('.header-btn__add-users');
+  btn.addEventListener('click', function() {
+    
+  });
 }

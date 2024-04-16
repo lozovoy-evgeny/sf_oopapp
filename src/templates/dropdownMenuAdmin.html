@@ -1,25 +1,32 @@
 <div class="container-fluid" id='navbar'>
     <a class="navbar-brand" href="#">Kanban Board</a>
-    <div class="btn-group">
-        <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Choose Kanban
-        </button>
-        <ul class="dropdown-menu" id="choose-kanban-dropdown-menu">
-          <!-- <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
-          <li><a class="dropdown-item" href="#">Separated link</a></li> -->
-        </ul>
-      </div>
-    <div class="dropdown-center" id="dropdownMenu">
-        <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Переключатель выпадающего списка</span>
-            <img src="/src/assets/user-avatar@2x.png" width="30" />
-            <img src="/src/assets/arrow-down@2x.png" width="30" class="arrow"/>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" >
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><a class="dropdown-item" href="../index.html" id="log-out">Log Out</a></li>
-        </ul>
+    <div class="container d-flex align-items-center">
+        <div class="header-btn d-inline-block">
+            <button type="button" class="btn btn-light header-btn__add-users">
+                Add user
+            </button>
+            <button type="button" class="btn btn-light header-btn__delete-users">
+                Delete user
+            </button>
+        </div>
+        <div class="btn-group d-inline-block">
+            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Choose Kanban
+            </button>
+            <ul class="dropdown-menu" id="choose-kanban-dropdown-menu">
+            </ul>
+        </div>
+        <div class="dropdown-center d-inline-block" id="dropdownMenu">
+            <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Переключатель выпадающего списка</span>
+                <img src="/src/assets/user-avatar@2x.png" width="30" />
+                <img src="/src/assets/arrow-down@2x.png" width="30" class="arrow"/>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" >
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="../index.html" id="log-out">Log Out</a></li>
+            </ul>
+        </div>
     </div>
+    
 </div>

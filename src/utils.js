@@ -1,5 +1,6 @@
 import { appState } from "./app";
 import noAccessTemplate from "./templates/noAccess.html";
+import { User } from "./models/User";
 
 export const getFromStorage = function (key) {
   return JSON.parse(localStorage.getItem(key) || "[]");
@@ -25,6 +26,7 @@ export const generateTaskField = function (taskFieldTemplate, dropdownMenuTempla
   if (appState.currentUser.storageKey == 'admins') {
     document.querySelector("#navbar").innerHTML = dropdownMenuTemplateAdmin;
     chooseKabnanDropdown();
+    addListenerEditUsers();
   }
   rotateDropdown();
   completionTaskField();
@@ -222,7 +224,7 @@ function generateId() {
 
 function addListenerToEditTask(id) {
   let element = document.getElementById(`${id}`);
-  element.addEventListener('click', function(){
+  element.addEventListener('click', function a(){
     let editor = document.querySelector('.tasks-editor');
     editor.style.display = 'block';
     let task = findTask(id);
@@ -230,6 +232,7 @@ function addListenerToEditTask(id) {
     document.querySelector('.tasks-editor__description').value = task.description;
     addChangeTaskInStorage(task);
     deleteTask(id);
+    element.removeEventListener('click', a);
   });
 }
 
@@ -411,9 +414,61 @@ function chengeStatusTask(deleteNodeId, stat) {
   addListenerToEditTask(task);
 }
 
-function addUsers() {
-  let btn = document.querySelector('.header-btn__add-users');
-  btn.addEventListener('click', function() {
-    
+
+function addListenerEditUsers() {
+  let btnHeader = document.querySelector('.header-btn__add-users');
+  let btnClose = document.getElementById('admin-editor__btn');
+  let btnAdd = document.querySelector('.admin-editor-btn__add-user');
+  let btnDelete = document.querySelector('.admin-editor-btn__delete');
+  let inputLoginAdd = document.querySelector('.admin-editor__login-add');
+  let inputPassordAdd = document.querySelector('.admin-editor__password-add');
+  let inputLoginDelete = document.querySelector('.admin-editor__login-delete');
+  let inputPassordDelete = document.querySelector('.admin-editor__password-delete');
+  let addInfo = document.querySelector('.add-info');
+  let deleteInfo = document.querySelector('.delete-info');
+
+  btnHeader.addEventListener('click', function(){
+    document.querySelector('.admin-editor').style.display = 'block';
   });
+
+  
+  btnClose.addEventListener('click', function(){
+    document.querySelector('.admin-editor').style.display = 'none';
+    if(inputLoginAdd.value !== '') {
+      inputLoginAdd.value = '';
+    }
+    if(inputPassordAdd.value !== '') {
+      inputPassordAdd.value = '';
+    }
+    if(inputLoginDelete.value !=='') {
+      inputLoginDelete.value = '';
+    }
+    if(inputPassordDelete.value !== '') {
+      inputPassordDelete.value = '';
+    }
+    addInfo.innerText = 'Add user to LocalStorage';
+    deleteInfo.innerText = 'Remove user from LocalStorage'
+  });
+
+  
+  btnAdd.addEventListener('click', function(){
+    generateTestUser(User, inputLoginAdd.value, inputPassordAdd.value, 'users');
+    addInfo.innerText = `User ${inputLoginAdd.value} added in LocalStorege`
+  });
+
+  btnDelete.addEventListener('click', function(){
+    deleteUser(inputLoginDelete.value, inputPassordDelete.value);
+    deleteInfo.innerText = `User ${inputLoginDelete.value} removed from LocalStorege`
+  });
+
+}
+
+function deleteUser(login, password) {
+  let users = getFromStorage('users');
+  for (let i=0; i < users.length; i++) {
+    if (users[i].login == login && users[i].password == password) {
+      users.splice(i, 1);
+    }
+  }
+  localStorage.setItem('users', JSON.stringify(users));
 }

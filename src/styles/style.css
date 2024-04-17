@@ -117,11 +117,16 @@
   background: rgb(203, 203, 203);
 }
 
-.tasks-editor {
+.tasks-editor, .admin-editor {
   display: none;
 }
 
-.tasks-editor-window {
+.admin-editor {
+  width: 1211px;
+  height: 548px;
+}
+
+.tasks-editor-window, .admin-editor-window {
   border-radius: 5px;
   background: rgb(255, 255, 255);
   width: 1211px;
@@ -130,6 +135,19 @@
 
 .tasks-editor__name {
   all: unset;
+  width: 621px;
+  height: 28px;
+  color: rgb(0, 0, 0);
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0%;
+  text-align: left; 
+}
+
+.admin-editor__login {
+  /* all: unset; */
   width: 621px;
   height: 28px;
   color: rgb(0, 0, 0);
@@ -160,6 +178,34 @@
   letter-spacing: 0%;
   text-align: left;
 }
+
+.admin-editor__password {
+  /* all: unset; */
+  width: 621px;
+  height: 28px;
+  color: rgb(0, 0, 0);
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0%;
+  text-align: left;
+}
+
+.addUser, .deleteUser {
+  text-align: center;
+}
+
+
+.admin-editor p  {
+  color: rgb(0, 0, 0);
+  font-family: 'Roboto';
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0%;
+}
+
 
 .tasks-editor__description::-webkit-scrollbar-thumb:hover {
   background: rgb(203, 203, 203) !important;
@@ -205,4 +251,8 @@
 
 .header-btn__delete-users {
   margin-left: 20px;
+}
+
+.conteiner-admin-editor__btn {
+  margin-top: -480px;
 }

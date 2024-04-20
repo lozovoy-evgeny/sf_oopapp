@@ -14,13 +14,13 @@ import { authUser } from "./services/auth";
 export const appState = new State();
 
 const loginForm = document.querySelector("#app-login-form");
-
-/* localStorage.clear(); */
+/* 
+localStorage.clear(); */
+if(localStorage.admins == undefined) {
+  generateTestUser(User, 'admin', 'admin', 'admins');
+}
 if(localStorage.users == undefined) {
   generateTestUser(User, '1', '1', 'users');
-  generateTestUser(User, '2', '2', 'users');
-  generateTestUser(User, '3', '3', 'admins');
-  generateTestUser(User, '4', '4', 'users');
 }
 
 loginForm.addEventListener("submit", function (e) {

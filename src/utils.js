@@ -32,7 +32,16 @@ export const generateTaskField = function (taskFieldTemplate, dropdownMenuTempla
   completionTaskField();
   countTask();
   hello();
+  taskEditorLogik();
 };
+
+function taskEditorLogik() {
+  let btnDelete = document.querySelector('.tasks-editor-btn__delete');
+  btnDelete.addEventListener('click', function() {
+    let editor = document.querySelector('.tasks-editor');
+    deleteTask(editor.id);
+  });
+}
 
 export const generateNoAccess = function (noAccessTemplate) {
   document.querySelector("#content").innerHTML = noAccessTemplate;
@@ -56,7 +65,14 @@ function completionTaskField() {
 };
 
 function chooseKabnanDropdown() {
-  let chooseDropdown = document.getElementById('choose-kanban-dropdown-menu');
+  let chooseDropdown = document.getElementById('choose-kanban-dropdown-menu');  
+  let child = chooseDropdown.lastElementChild;
+  while (child) {
+    chooseDropdown.removeChild(child);
+    child = chooseDropdown.lastElementChild;
+  }
+  
+
   let users = getFromStorage('users');
   for (let i=0; i < users.length; i++) {
     let li = document.createElement('li');
@@ -201,14 +217,15 @@ function addToStorageUsers() {
   let allAdmin = JSON.parse(localStorage.admins);
   
   for(let i=0; i < allUser.length; i++) {
-    if(allUser[i].id === currentUser.id) {
+    if(allUser[i].id == currentUser.id) {
       allUser[i] = currentUser;
       /* localStorage.clear(); */
+      console.log();
       localStorage.setItem('users', JSON.stringify(allUser));
     }
   };
   for(let i=0; i < allAdmin.length; i++) {
-    if(allAdmin[i].id === currentUser.id) {
+    if(allAdmin[i].id == currentUser.id) {
       allAdmin[i] = currentUser;
       /* localStorage.clear(); */
       localStorage.setItem('admins', JSON.stringify(allAdmin));
@@ -227,21 +244,20 @@ function addListenerToEditTask(id) {
   element.addEventListener('click', function a(){
     let editor = document.querySelector('.tasks-editor');
     editor.style.display = 'block';
+    editor.id = id;
     let task = findTask(id);
     document.querySelector('.tasks-editor__name').value = task.name;
     document.querySelector('.tasks-editor__description').value = task.description;
     addChangeTaskInStorage(task);
-    deleteTask(id);
+/*     deleteTask(id); */
     element.removeEventListener('click', a);
   });
 }
 
 function deleteTask(id) {
-  let btn = document.querySelector(".tasks-editor-btn__delete");
-  btn.addEventListener('click', function a() {
     let tasks = appState.currentUser.tasks;
     for (let i=0; i < tasks.length; i++) {
-      if (tasks[i].id === id) {
+      if (tasks[i].id == id) {
         tasks.splice(i, 1);
       }
     };
@@ -250,8 +266,7 @@ function deleteTask(id) {
     deleteTask.remove();
     dropdownMenuСompletion();
     document.querySelector('.tasks-editor').style.display = 'none';
-    btn.removeEventListener('click', a);
-  });
+/*     btn.removeEventListener('click', a); */
 }
 
 function addChangeTaskInStorage(task) {
@@ -411,7 +426,7 @@ function chengeStatusTask(deleteNodeId, stat) {
   createNode(task);
   findAndChengeTask(deleteNodeId, task);
   addToStorageUsers();
-  addListenerToEditTask(task);
+  addListenerToEditTask(task.id);
 }
 
 
@@ -453,7 +468,8 @@ function addListenerEditUsers() {
   
   btnAdd.addEventListener('click', function(){
     generateTestUser(User, inputLoginAdd.value, inputPassordAdd.value, 'users');
-    addInfo.innerText = `User ${inputLoginAdd.value} added in LocalStorege`
+    addInfo.innerText = `User ${inputLoginAdd.value} added in LocalStorege`;
+    chooseKabnanDropdown();
   });
 
   btnDelete.addEventListener('click', function(){
@@ -471,4 +487,5 @@ function deleteUser(login, password) {
     }
   }
   localStorage.setItem('users', JSON.stringify(users));
+  chooseKabnanDropdown();
 }

@@ -69,6 +69,7 @@
 .tasks-zone__task {
   border-radius: 5px;
   background: rgb(255, 255, 255);
+  width:263px; 
 }
 
 .tasks-zone__name {

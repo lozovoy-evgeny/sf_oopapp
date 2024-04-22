@@ -5,17 +5,19 @@ import noAccessTemplate from "./templates/noAccess.html";
 import dropdownMenuTemplate from "./templates/dropdownMenu.html";
 import dropdownMenuTemplateAdmin from "./templates/dropdownMenuAdmin.html"
 import { User } from "./models/User";
-import { generateTestUser } from "./utils";
+import { addToStorageUsers, generateTestUser } from "./utils";
 import { generateTaskField } from "./utils";
-import { generateNoAccess } from "./utils";
+import { generateNoAccess, getFromStorage } from "./utils";
 import { State } from "./state";
 import { authUser } from "./services/auth";
 
 export const appState = new State();
 
 const loginForm = document.querySelector("#app-login-form");
-/* 
-localStorage.clear(); */
+
+
+
+/* localStorage.clear(); */
 if(localStorage.admins == undefined) {
   generateTestUser(User, 'admin', 'admin', 'admins');
 }
@@ -34,3 +36,22 @@ loginForm.addEventListener("submit", function (e) {
     : generateNoAccess(noAccessTemplate);
 });
 
+autoLog();
+
+function autoLog() {
+  let users = getFromStorage('users');
+  let admins = getFromStorage('admins');
+
+  for(let i=0; i < users.length; i++) {
+    if(users[i].flag == 'online') {
+      appState.currentUser = users[i];
+      generateTaskField(taskFieldTemplate, dropdownMenuTemplate, dropdownMenuTemplateAdmin);
+    }
+  };
+  for(let i=0; i < admins.length; i++) {
+    if(admins[i].flag == 'online') {
+      appState.currentUser = admins[i];
+      generateTaskField(taskFieldTemplate, dropdownMenuTemplate, dropdownMenuTemplateAdmin);
+    }
+  };
+}

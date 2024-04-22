@@ -33,6 +33,7 @@ export const generateTaskField = function (taskFieldTemplate, dropdownMenuTempla
   countTask();
   hello();
   taskEditorLogik();
+  logOut ();
 };
 
 function taskEditorLogik() {
@@ -209,9 +210,11 @@ function createNode(taskAttributs) {
 
   let nodeTask = document.getElementById(taskAttributs.stat);
   nodeTask.append(div);
+
+  addDragDrop(taskAttributs.id);
 };
 
-function addToStorageUsers() {
+export function addToStorageUsers() {
   let currentUser = appState.currentUser;
   let allUser = JSON.parse(localStorage.users);
   let allAdmin = JSON.parse(localStorage.admins);
@@ -249,7 +252,6 @@ function addListenerToEditTask(id) {
     document.querySelector('.tasks-editor__name').value = task.name;
     document.querySelector('.tasks-editor__description').value = task.description;
     addChangeTaskInStorage(task);
-/*     deleteTask(id); */
     element.removeEventListener('click', a);
   });
 }
@@ -266,7 +268,6 @@ function deleteTask(id) {
     deleteTask.remove();
     dropdownMenuСompletion();
     document.querySelector('.tasks-editor').style.display = 'none';
-/*     btn.removeEventListener('click', a); */
 }
 
 function addChangeTaskInStorage(task) {
@@ -420,13 +421,13 @@ function addTaskToFinished() {
 function chengeStatusTask(deleteNodeId, stat) {
   let deleteTask = document.getElementById(`${deleteNodeId}`);
   deleteTask.remove();
-  dropdownMenuСompletion();
   let task = findTask(deleteNodeId);
   task.stat = stat;
   createNode(task);
   findAndChengeTask(deleteNodeId, task);
   addToStorageUsers();
   addListenerToEditTask(task.id);
+  dropdownMenuСompletion();
 }
 
 
@@ -489,3 +490,89 @@ function deleteUser(login, password) {
   localStorage.setItem('users', JSON.stringify(users));
   chooseKabnanDropdown();
 }
+
+function logOut () {
+  let bnt = document.getElementById('log-out');
+  bnt.addEventListener('click', function() {
+    appState._currentUser.flag = '';
+    addToStorageUsers();
+  })
+}
+
+function addDragDrop(id) {
+  let elemBelow;
+  let flag;
+
+  let task = document.getElementById(`${id}`);
+
+  task.onmousedown = function(event) {
+    flag = true;
+    let shiftX = event.clientX - task.getBoundingClientRect().left;
+    let shiftY = event.clientY - task.getBoundingClientRect().top;
+
+    function moveAt(pageX, pageY) {
+      task.style.left = pageX - shiftX + 'px';
+      task.style.top = pageY - shiftY + 'px';
+    }
+
+    function onMouseMove(event) {
+      if (flag) {
+        task.style.position = 'absolute';
+        task.style.zIndex = 1000;
+        task.classList.add('move_task');
+        document.body.append(task);
+  
+        moveAt(event.pageX, event.pageY);
+        task.hidden = true;
+        elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+        task.hidden = false;
+  
+        if (!elemBelow) return;
+      } 
+    }
+      
+    document.addEventListener('mousemove', onMouseMove);
+            
+    task.onmouseup = function() {
+      flag = false;
+      let backlogZone = elemBelow.closest('.backlog');
+      let readyZone =  elemBelow.closest('.ready');
+      let progressZone = elemBelow.closest('.in-progress');
+      let finishedZone = elemBelow.closest('.finished');
+      
+      if (elemBelow = backlogZone) {
+        chengeStatusTask(task.id, 'backlog');
+        document.querySelector('.move_task').remove();
+        return
+      }
+      if (elemBelow = readyZone) {
+        chengeStatusTask(task.id, 'ready');
+        document.querySelector('.move_task').remove();
+        return
+      }
+      if (elemBelow = progressZone) {
+        chengeStatusTask(task.id, 'progress');
+        document.querySelector('.move_task').remove();
+        return
+      }
+      if (elemBelow = finishedZone) {
+        chengeStatusTask(task.id, 'finished');
+        document.querySelector('.move_task').remove();
+        return
+      } else {
+        let taskStat = findTask(task.id).stat;
+        chengeStatusTask(task.id, taskStat);
+        document.querySelector('.move_task').remove();
+      }
+
+      document.removeEventListener('mousemove', onMouseMove);
+      task.onmouseup = null;
+    };
+
+    task.ondragstart = function() {
+      return false;
+    };
+  }
+}
+
+  
